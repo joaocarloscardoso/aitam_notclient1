@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="windows-1252"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    </head>
+    <body>
+        <div>Client to send notification and receive</div>
+        <p>
+            <table>
+                <tr>
+                    <td><strong>Request Text</strong></td>
+                    <td><input type="text" placeholder="Text request" id="subject" name="subject"> </td>
+                </tr>
+                <tr>
+                    <td>&nbsp;</td>
+                    <td>
+                        <input type="hidden" id="sessionid" name="sessionid" value="3487">
+                        <input type="hidden" id="objectid" name="objectid" value="rec20200102">
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td><input type="button" onclick="SendRequest()" value="Send Request" id="SendRequest"></td>
+                </tr>
+            </table>
+        </p>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
+    <script>
+        //web address of notification server
+        var socket = io("http://localhost:3010");
+        function SendRequest(){
+            socket.emit("requestCUBE", {
+                "subject": document.getElementById("subject").value,
+                "sessionid": document.getElementById("sessionid").value,
+                "objectid": document.getElementById("objectid").value
+            });
+        }
+    </script>
+    </body>
+</html>
