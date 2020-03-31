@@ -6,7 +6,7 @@ and open the template in the editor.
 -->
 <html>
     <head>
-        <title>TODO supply a title</title>
+        <title>AITAM Notification client</title>
         <meta charset="windows-1252"/>
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     </head>
@@ -31,17 +31,56 @@ and open the template in the editor.
                 </tr>
             </table>
         </p>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
-    <script>
-        //web address of notification server
-        var socket = io("http://localhost:3010");
-        function SendRequest(){
-            socket.emit("requestCUBE", {
-                "subject": document.getElementById("subject").value,
-                "sessionid": document.getElementById("sessionid").value,
-                "objectid": document.getElementById("objectid").value
-            });
-        }
-    </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/notify/0.4.2/notify.min.js"></script>
+
+        <script>
+            //web address of notification server
+            var socket = io("http://localhost:3010");
+
+
+
+            function SendRequest(){
+                socket.emit("requestCUBE", {
+                    "subject": document.getElementById("subject").value,
+                    "sessionid": document.getElementById("sessionid").value,
+                    "objectid": document.getElementById("objectid").value
+                });
+            };
+
+            socket.on("responseCUBE", function (message) {
+                notifyMe(message.title, message.explanation);
+            });        
+
+            function notifyMe(title, explanation) {
+                if (!("Notification" in window)) {
+                    alert("This browser does not support desktop notification");
+                }
+                else if (Notification.permission === "granted") {
+                    var options = {
+                        body: explanation,
+                        icon: "icon.jpg",
+                        dir : "ltr"
+                    };
+                    var notification = new Notification(title,options);
+                }
+                else if (Notification.permission !== 'denied') {
+                    Notification.requestPermission(function (permission) {
+                        if (!('permission' in Notification)) {
+                            Notification.permission = permission;
+                        }
+
+                        if (permission === "granted") {
+                            var options = {
+                                body: "This is the body of the notification",
+                                icon: "icon.jpg",
+                                dir : "ltr"
+                            };
+                            var notification = new Notification("Hi there",options);
+                        }
+                    });
+                }
+            }        
+        </script>
     </body>
 </html>
